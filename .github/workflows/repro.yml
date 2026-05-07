@@ -14,11 +14,9 @@ jobs:
         scenario:
           - name: default
             env: ''
-          - name: tree-shaking
-            env: 'EXPO_UNSTABLE_TREE_SHAKING=1'
           - name: graph-optimize
             env: 'EXPO_UNSTABLE_METRO_OPTIMIZE_GRAPH=1'
-          - name: both
+          - name: tree-shaking
             env: 'EXPO_UNSTABLE_TREE_SHAKING=1 EXPO_UNSTABLE_METRO_OPTIMIZE_GRAPH=1'
     name: build (${{ matrix.scenario.name }})
     steps:

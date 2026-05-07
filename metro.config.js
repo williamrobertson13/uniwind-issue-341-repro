@@ -7,7 +7,8 @@ module.exports = (() => {
 
 	config.transformer.getTransformOptions = async () => ({
 		transform: {
-			experimentalImportSupport: false,
+			experimentalImportSupport: true,
+			inlineRequires: process.env.EXPO_UNSTABLE_TREE_SHAKING === '1',
 		},
 	});
 
