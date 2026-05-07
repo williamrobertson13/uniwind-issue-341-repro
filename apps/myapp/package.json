@@ -13,6 +13,7 @@
 		"react": "19.1.0",
 		"react-dom": "19.1.0",
 		"react-native": "~0.81.5",
+		"@sentry/react-native": "^7.4.0",
 		"@shopify/react-native-skia": "^2.6.2",
 		"react-native-gesture-handler": "^2.31.2",
 		"react-native-reanimated": "^4.3.1",
