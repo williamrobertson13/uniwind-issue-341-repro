@@ -2,7 +2,7 @@
 
 Reproduction scaffold for [uni-stack/uniwind#341](https://github.com/uni-stack/uniwind/issues/341): `expo export -p web` fails on `ubuntu-latest` with a `SyntaxError` parsing `node_modules/uniwind/dist/{common,module}/components/web/metro-injected.js`.
 
-> **Status**: scaffold only — does not yet reproduce. The matrix below varies the parts of a real-world Expo SDK 54 setup that seemed most likely to trigger the race, while keeping this repository generic and free of downstream app code. Latest Expo Router + large-graph run: https://github.com/williamrobertson13/uniwind-issue-341-repro/actions/runs/25515441899
+> **Status**: scaffold only — does not yet reproduce. The matrix below varies the parts of a real-world Expo SDK 54 setup that seemed most likely to trigger the race, while keeping this repository generic and free of downstream app code. Latest CSS-entry + package-exported CSS run: https://github.com/williamrobertson13/uniwind-issue-341-repro/actions/runs/25519784709
 
 ## What's been tried (all green)
 
@@ -19,6 +19,7 @@ Reproduction scaffold for [uni-stack/uniwind#341](https://github.com/uni-stack/u
 | exact Expo/RN/Metro/Tailwind/Uniwind versions from a failing downstream stack | pass |
 | generic extension-like Metro resolver mode (`REPRO_EXTENSION_MODE=true`) | pass |
 | Expo Router entry with `src/app` root | pass |
+| imported Uniwind CSS entry + generic package-exported CSS subpath | pass |
 
 ## Failing log (from the original report and downstream observations)
 
@@ -42,7 +43,7 @@ GitHub Actions workflow (`.github/workflows/repro.yml`) runs `expo export -p web
 | graph-optimize  | `EXPO_UNSTABLE_METRO_OPTIMIZE_GRAPH=1`                             |
 | tree-shaking    | both `EXPO_UNSTABLE_TREE_SHAKING=1` + `EXPO_UNSTABLE_METRO_OPTIMIZE_GRAPH=1` |
 
-Each scenario runs 5 iterations with full cache clear (`dist`, `.expo`, `node_modules/.cache`) between each. `metro.config.js` forces `maxWorkers=8`, disables package exports by default, selectively re-enables them for generic Uniwind-related packages, and enables a generic extension-like resolver mode via `REPRO_EXTENSION_MODE=true`.
+Each scenario runs 5 iterations with full cache clear (`dist`, `.expo`, `node_modules/.cache`) between each. `metro.config.js` forces `maxWorkers=8`, disables package exports by default, selectively re-enables them for generic Uniwind-related packages, and enables a generic extension-like resolver mode via `REPRO_EXTENSION_MODE=true`. The Expo Router root imports both the app's Uniwind CSS entry (`src/styles.css`) and a generic local package CSS export (`@repro/layered-css/layered-styles.css`), so CI exercises Metro's CSS transforms and CSS asset emission for app and package CSS.
 
 ## Versions
 
