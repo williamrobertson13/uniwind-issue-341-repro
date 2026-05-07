@@ -29,5 +29,10 @@ jobs:
       - name: Install
         run: npm install --legacy-peer-deps
 
-      - name: Export web
-        run: ${{ matrix.scenario.env }} npx expo export -p web
+      - name: Export web (5x)
+        run: |
+          for i in 1 2 3 4 5; do
+            echo "=== iteration $i ==="
+            rm -rf dist .expo
+            ${{ matrix.scenario.env }} npx expo export -p web
+          done
