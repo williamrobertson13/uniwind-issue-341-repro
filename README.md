@@ -2,7 +2,7 @@
 
 Reproduction scaffold for [uni-stack/uniwind#341](https://github.com/uni-stack/uniwind/issues/341): `expo export -p web` fails on `ubuntu-latest` with a `SyntaxError` parsing `node_modules/uniwind/dist/{common,module}/components/web/metro-injected.js`.
 
-> **Status**: scaffold only — does not yet reproduce. The matrix below varies the parts of a real-world Expo SDK 54 setup that seemed most likely to trigger the race, while keeping this repository generic and free of downstream app code.
+> **Status**: scaffold only — does not yet reproduce. The matrix below varies the parts of a real-world Expo SDK 54 setup that seemed most likely to trigger the race, while keeping this repository generic and free of downstream app code. Latest large-graph run: https://github.com/williamrobertson13/uniwind-issue-341-repro/actions/runs/25514903758
 
 ## What's been tried (all green)
 
@@ -15,9 +15,9 @@ Reproduction scaffold for [uni-stack/uniwind#341](https://github.com/uni-stack/u
 | pnpm workspace (deep `node_modules/.pnpm/` symlinked store) | pass |
 | `react-native-reanimated` + `gesture-handler` + `@shopify/react-native-skia` + `react-native-svg` | pass |
 | Sentry metro wrapper (`getSentryExpoConfig`), custom babel transformer wrapping default, `resolveRequest` passthrough | pass |
-| 1,400 generated screens + 4,200 generated helper/data modules | pending |
-| exact Expo/RN/Metro/Tailwind/Uniwind versions from a failing downstream stack | pending |
-| generic extension-like Metro resolver mode (`REPRO_EXTENSION_MODE=true`) | pending |
+| 1,400 generated screens + 4,200 generated helper/data modules | pass |
+| exact Expo/RN/Metro/Tailwind/Uniwind versions from a failing downstream stack | pass |
+| generic extension-like Metro resolver mode (`REPRO_EXTENSION_MODE=true`) | pass |
 
 ## Failing log (from the original report and downstream observations)
 
