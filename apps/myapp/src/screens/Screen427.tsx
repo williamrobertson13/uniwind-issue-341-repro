@@ -1,14 +1,20 @@
-import { Text, View, Pressable } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+
+import { copy427 } from '../generated/copy/copy427';
+import { layout427 } from '../generated/layouts/layout427';
+import { palette427 } from '../generated/palettes/palette427';
 
 export function Screen427() {
 	return (
-		<View className="flex items-center justify-center p-2 bg-red-50 rounded-md ring-2 ring-red-300">
-			<View className="size-11 bg-blue-500 rounded-full" />
-			<View className="absolute inset-0 p-4 bg-pink-100 rounded-full opacity-90 m-3" />
-			<Pressable className="px-3 py-4 bg-purple-500 active:bg-purple-700 rounded-md">
-				<Text className="text-sm font-medium text-gray-500">Screen 427</Text>
+		<View className="flex-row-reverse gap-1 p-5 bg-yellow-100 rounded shadow-lg">
+			<View className="size-11 bg-blue-800 rounded-full" />
+			<View className={layout427.rhythm} />
+			<Pressable className="px-6 py-1 bg-purple-500 active:bg-purple-700 rounded-md">
+				<Text className="text-xl font-bold text-gray-500">{copy427.title}</Text>
 			</Pressable>
-			<Text className="text-sm text-gray-700 italic underline tracking-wider">item-427</Text>
+			<Text className="text-sm text-gray-700 italic underline tracking-normal">
+				{copy427.detail} / {palette427.name}
+			</Text>
 		</View>
 	);
 }

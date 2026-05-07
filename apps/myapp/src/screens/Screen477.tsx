@@ -1,14 +1,20 @@
-import { Text, View, Pressable } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+
+import { copy477 } from '../generated/copy/copy477';
+import { layout477 } from '../generated/layouts/layout477';
+import { palette477 } from '../generated/palettes/palette477';
 
 export function Screen477() {
 	return (
-		<View className="flex-wrap gap-6 p-1 bg-purple-50 rounded-3xl border-dashed border-2">
-			<View className="size-13 bg-blue-100 rounded-full" />
-			<View className="flex-row gap-2 p-4 bg-gray-100 rounded-lg shadow-md m-5" />
-			<Pressable className="px-5 py-2 bg-purple-100 active:bg-purple-700 rounded-md">
-				<Text className="text-lg font-medium text-gray-100">Screen 477</Text>
+		<View className="absolute inset-0 p-4 bg-pink-100 rounded-full opacity-90">
+			<View className="size-13 bg-emerald-500 rounded-full" />
+			<View className={layout477.rhythm} />
+			<Pressable className="px-2 py-1 bg-purple-100 active:bg-purple-700 rounded-md">
+				<Text className="text-xs font-light text-gray-100">{copy477.title}</Text>
 			</Pressable>
-			<Text className="text-sm text-gray-700 italic underline tracking-normal">item-477</Text>
+			<Text className="text-sm text-gray-700 italic underline tracking-normal">
+				{copy477.detail} / {palette477.name}
+			</Text>
 		</View>
 	);
 }

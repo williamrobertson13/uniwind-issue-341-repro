@@ -1,14 +1,20 @@
-import { Text, View, Pressable } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+
+import { copy323 } from '../generated/copy/copy323';
+import { layout323 } from '../generated/layouts/layout323';
+import { palette323 } from '../generated/palettes/palette323';
 
 export function Screen323() {
 	return (
-		<View className="flex items-center justify-center p-2 bg-red-50 rounded-md ring-2 ring-red-300">
-			<View className="size-15 bg-blue-900 rounded-full" />
-			<View className="absolute inset-0 p-4 bg-pink-100 rounded-full opacity-90 m-3" />
-			<Pressable className="px-7 py-4 bg-purple-900 active:bg-purple-700 rounded-md">
-				<Text className="text-2xl font-semibold text-gray-900">Screen 323</Text>
+		<View className="flex-row-reverse gap-1 p-5 bg-yellow-100 rounded shadow-lg">
+			<View className="size-15 bg-rose-500 rounded-full" />
+			<View className={layout323.rhythm} />
+			<Pressable className="px-4 py-1 bg-purple-900 active:bg-purple-700 rounded-md">
+				<Text className="text-base font-semibold text-gray-900">{copy323.title}</Text>
 			</Pressable>
-			<Text className="text-sm text-gray-700 italic underline tracking-wider">item-323</Text>
+			<Text className="text-sm text-gray-700 italic underline tracking-normal">
+				{copy323.detail} / {palette323.name}
+			</Text>
 		</View>
 	);
 }

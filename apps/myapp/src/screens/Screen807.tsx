@@ -1,0 +1,20 @@
+import { Pressable, Text, View } from 'react-native';
+
+import { copy807 } from '../generated/copy/copy807';
+import { layout807 } from '../generated/layouts/layout807';
+import { palette807 } from '../generated/palettes/palette807';
+
+export function Screen807() {
+	return (
+		<View className="flex-row gap-2 p-4 bg-gray-100 rounded-lg shadow-md">
+			<View className="size-7 bg-blue-400 rounded-full" />
+			<View className={layout807.rhythm} />
+			<Pressable className="px-2 py-3 bg-purple-700 active:bg-purple-700 rounded-md">
+				<Text className="text-xs font-normal text-gray-700">{copy807.title}</Text>
+			</Pressable>
+			<Text className="text-sm text-gray-700 italic underline tracking-normal">
+				{copy807.detail} / {palette807.name}
+			</Text>
+		</View>
+	);
+}

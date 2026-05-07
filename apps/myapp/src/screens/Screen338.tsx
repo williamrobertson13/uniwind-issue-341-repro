@@ -1,14 +1,20 @@
-import { Text, View, Pressable } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+
+import { copy338 } from '../generated/copy/copy338';
+import { layout338 } from '../generated/layouts/layout338';
+import { palette338 } from '../generated/palettes/palette338';
 
 export function Screen338() {
 	return (
-		<View className="grid grid-cols-2 gap-4 p-3 bg-green-100 rounded-2xl">
-			<View className="size-6 bg-blue-600 rounded-full" />
-			<View className="flex-wrap gap-6 p-1 bg-purple-50 rounded-3xl border-dashed border-2 m-2" />
-			<Pressable className="px-4 py-3 bg-purple-600 active:bg-purple-700 rounded-md">
-				<Text className="text-base font-semibold text-gray-600">Screen 338</Text>
+		<View className="flex items-center justify-center p-2 bg-red-50 rounded-md ring-2 ring-red-300">
+			<View className="size-6 bg-blue-300 rounded-full" />
+			<View className={layout338.rhythm} />
+			<Pressable className="px-7 py-2 bg-purple-600 active:bg-purple-700 rounded-md">
+				<Text className="text-2xl font-light text-gray-600">{copy338.title}</Text>
 			</Pressable>
-			<Text className="text-sm text-gray-700 italic underline tracking-wide">item-338</Text>
+			<Text className="text-sm text-gray-700 italic underline tracking-normal">
+				{copy338.detail} / {palette338.name}
+			</Text>
 		</View>
 	);
 }

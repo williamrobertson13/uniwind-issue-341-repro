@@ -1,14 +1,20 @@
-import { Text, View, Pressable } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+
+import { copy424 } from '../generated/copy/copy424';
+import { layout424 } from '../generated/layouts/layout424';
+import { palette424 } from '../generated/palettes/palette424';
 
 export function Screen424() {
 	return (
-		<View className="flex-row gap-2 p-4 bg-gray-100 rounded-lg shadow-md">
-			<View className="size-8 bg-blue-200 rounded-full" />
-			<View className="flex items-center justify-center p-2 bg-red-50 rounded-md ring-2 ring-red-300 m-0" />
-			<Pressable className="px-6 py-1 bg-purple-200 active:bg-purple-700 rounded-md">
-				<Text className="text-xl font-bold text-gray-200">Screen 424</Text>
+		<View className="flex-col gap-3 p-6 bg-blue-50 rounded-xl border border-blue-200">
+			<View className="size-8 bg-blue-500 rounded-full" />
+			<View className={layout424.rhythm} />
+			<Pressable className="px-3 py-2 bg-purple-200 active:bg-purple-700 rounded-md">
+				<Text className="text-sm font-normal text-gray-200">{copy424.title}</Text>
 			</Pressable>
-			<Text className="text-sm text-gray-700 italic underline tracking-tight">item-424</Text>
+			<Text className="text-sm text-gray-700 italic underline tracking-normal">
+				{copy424.detail} / {palette424.name}
+			</Text>
 		</View>
 	);
 }

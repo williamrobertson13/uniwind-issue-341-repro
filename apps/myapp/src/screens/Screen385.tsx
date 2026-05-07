@@ -1,14 +1,20 @@
-import { Text, View, Pressable } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+
+import { copy385 } from '../generated/copy/copy385';
+import { layout385 } from '../generated/layouts/layout385';
+import { palette385 } from '../generated/palettes/palette385';
 
 export function Screen385() {
 	return (
-		<View className="flex-col gap-3 p-6 bg-blue-50 rounded-xl border border-blue-200">
-			<View className="size-5 bg-blue-800 rounded-full" />
-			<View className="flex-row-reverse gap-1 p-5 bg-yellow-100 rounded shadow-lg m-1" />
-			<Pressable className="px-3 py-2 bg-purple-800 active:bg-purple-700 rounded-md">
-				<Text className="text-sm font-light text-gray-800">Screen 385</Text>
+		<View className="grid grid-cols-2 gap-4 p-3 bg-green-100 rounded-2xl">
+			<View className="size-5 bg-blue-200 rounded-full" />
+			<View className={layout385.rhythm} />
+			<Pressable className="px-3 py-4 bg-purple-800 active:bg-purple-700 rounded-md">
+				<Text className="text-sm font-medium text-gray-800">{copy385.title}</Text>
 			</Pressable>
-			<Text className="text-sm text-gray-700 italic underline tracking-normal">item-385</Text>
+			<Text className="text-sm text-gray-700 italic underline tracking-normal">
+				{copy385.detail} / {palette385.name}
+			</Text>
 		</View>
 	);
 }

@@ -1,14 +1,20 @@
-import { Text, View, Pressable } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+
+import { copy384 } from '../generated/copy/copy384';
+import { layout384 } from '../generated/layouts/layout384';
+import { palette384 } from '../generated/palettes/palette384';
 
 export function Screen384() {
 	return (
-		<View className="flex-row gap-2 p-4 bg-gray-100 rounded-lg shadow-md">
-			<View className="size-4 bg-blue-700 rounded-full" />
-			<View className="flex items-center justify-center p-2 bg-red-50 rounded-md ring-2 ring-red-300 m-0" />
-			<Pressable className="px-2 py-1 bg-purple-700 active:bg-purple-700 rounded-md">
-				<Text className="text-xs font-bold text-gray-700">Screen 384</Text>
+		<View className="flex-col gap-3 p-6 bg-blue-50 rounded-xl border border-blue-200">
+			<View className="size-4 bg-blue-100 rounded-full" />
+			<View className={layout384.rhythm} />
+			<Pressable className="px-2 py-3 bg-purple-700 active:bg-purple-700 rounded-md">
+				<Text className="text-xs font-normal text-gray-700">{copy384.title}</Text>
 			</Pressable>
-			<Text className="text-sm text-gray-700 italic underline tracking-tight">item-384</Text>
+			<Text className="text-sm text-gray-700 italic underline tracking-normal">
+				{copy384.detail} / {palette384.name}
+			</Text>
 		</View>
 	);
 }

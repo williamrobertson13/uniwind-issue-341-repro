@@ -1,14 +1,20 @@
-import { Text, View, Pressable } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+
+import { copy75 } from '../generated/copy/copy75';
+import { layout75 } from '../generated/layouts/layout75';
+import { palette75 } from '../generated/palettes/palette75';
 
 export function Screen75() {
 	return (
-		<View className="flex items-center justify-center p-2 bg-red-50 rounded-md ring-2 ring-red-300">
+		<View className="flex-row-reverse gap-1 p-5 bg-yellow-100 rounded shadow-lg">
 			<View className="size-7 bg-blue-400 rounded-full" />
-			<View className="absolute inset-0 p-4 bg-pink-100 rounded-full opacity-90 m-3" />
+			<View className={layout75.rhythm} />
 			<Pressable className="px-5 py-4 bg-purple-400 active:bg-purple-700 rounded-md">
-				<Text className="text-lg font-light text-gray-400">Screen 75</Text>
+				<Text className="text-lg font-semibold text-gray-400">{copy75.title}</Text>
 			</Pressable>
-			<Text className="text-sm text-gray-700 italic underline tracking-wider">item-75</Text>
+			<Text className="text-sm text-gray-700 italic underline tracking-normal">
+				{copy75.detail} / {palette75.name}
+			</Text>
 		</View>
 	);
 }

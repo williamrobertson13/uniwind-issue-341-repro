@@ -1,14 +1,20 @@
-import { Text, View, Pressable } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+
+import { copy245 } from '../generated/copy/copy245';
+import { layout245 } from '../generated/layouts/layout245';
+import { palette245 } from '../generated/palettes/palette245';
 
 export function Screen245() {
 	return (
-		<View className="flex-wrap gap-6 p-1 bg-purple-50 rounded-3xl border-dashed border-2">
-			<View className="size-9 bg-blue-300 rounded-full" />
-			<View className="flex-row gap-2 p-4 bg-gray-100 rounded-lg shadow-md m-5" />
-			<Pressable className="px-7 py-2 bg-purple-300 active:bg-purple-700 rounded-md">
-				<Text className="text-2xl font-light text-gray-300">Screen 245</Text>
+		<View className="absolute inset-0 p-4 bg-pink-100 rounded-full opacity-90">
+			<View className="size-9 bg-blue-600 rounded-full" />
+			<View className={layout245.rhythm} />
+			<Pressable className="px-4 py-3 bg-purple-300 active:bg-purple-700 rounded-md">
+				<Text className="text-base font-medium text-gray-300">{copy245.title}</Text>
 			</Pressable>
-			<Text className="text-sm text-gray-700 italic underline tracking-normal">item-245</Text>
+			<Text className="text-sm text-gray-700 italic underline tracking-normal">
+				{copy245.detail} / {palette245.name}
+			</Text>
 		</View>
 	);
 }

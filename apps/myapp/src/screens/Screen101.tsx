@@ -1,14 +1,20 @@
-import { Text, View, Pressable } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+
+import { copy101 } from '../generated/copy/copy101';
+import { layout101 } from '../generated/layouts/layout101';
+import { palette101 } from '../generated/palettes/palette101';
 
 export function Screen101() {
 	return (
-		<View className="flex-wrap gap-6 p-1 bg-purple-50 rounded-3xl border-dashed border-2">
-			<View className="size-9 bg-blue-300 rounded-full" />
-			<View className="flex-row gap-2 p-4 bg-gray-100 rounded-lg shadow-md m-5" />
-			<Pressable className="px-7 py-2 bg-purple-300 active:bg-purple-700 rounded-md">
-				<Text className="text-2xl font-normal text-gray-300">Screen 101</Text>
+		<View className="absolute inset-0 p-4 bg-pink-100 rounded-full opacity-90">
+			<View className="size-9 bg-blue-600 rounded-full" />
+			<View className={layout101.rhythm} />
+			<Pressable className="px-4 py-3 bg-purple-300 active:bg-purple-700 rounded-md">
+				<Text className="text-base font-medium text-gray-300">{copy101.title}</Text>
 			</Pressable>
-			<Text className="text-sm text-gray-700 italic underline tracking-normal">item-101</Text>
+			<Text className="text-sm text-gray-700 italic underline tracking-normal">
+				{copy101.detail} / {palette101.name}
+			</Text>
 		</View>
 	);
 }

@@ -1,14 +1,20 @@
-import { Text, View, Pressable } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+
+import { copy459 } from '../generated/copy/copy459';
+import { layout459 } from '../generated/layouts/layout459';
+import { palette459 } from '../generated/palettes/palette459';
 
 export function Screen459() {
 	return (
-		<View className="flex items-center justify-center p-2 bg-red-50 rounded-md ring-2 ring-red-300">
-			<View className="size-7 bg-blue-100 rounded-full" />
-			<View className="absolute inset-0 p-4 bg-pink-100 rounded-full opacity-90 m-3" />
-			<Pressable className="px-5 py-4 bg-purple-100 active:bg-purple-700 rounded-md">
-				<Text className="text-lg font-bold text-gray-100">Screen 459</Text>
+		<View className="flex-row-reverse gap-1 p-5 bg-yellow-100 rounded shadow-lg">
+			<View className="size-7 bg-blue-400 rounded-full" />
+			<View className={layout459.rhythm} />
+			<Pressable className="px-2 py-1 bg-purple-100 active:bg-purple-700 rounded-md">
+				<Text className="text-xs font-light text-gray-100">{copy459.title}</Text>
 			</Pressable>
-			<Text className="text-sm text-gray-700 italic underline tracking-wider">item-459</Text>
+			<Text className="text-sm text-gray-700 italic underline tracking-normal">
+				{copy459.detail} / {palette459.name}
+			</Text>
 		</View>
 	);
 }

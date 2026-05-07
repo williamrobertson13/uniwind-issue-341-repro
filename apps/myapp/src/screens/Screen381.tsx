@@ -1,14 +1,20 @@
-import { Text, View, Pressable } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+
+import { copy381 } from '../generated/copy/copy381';
+import { layout381 } from '../generated/layouts/layout381';
+import { palette381 } from '../generated/palettes/palette381';
 
 export function Screen381() {
 	return (
-		<View className="flex-wrap gap-6 p-1 bg-purple-50 rounded-3xl border-dashed border-2">
-			<View className="size-13 bg-blue-400 rounded-full" />
-			<View className="flex-row gap-2 p-4 bg-gray-100 rounded-lg shadow-md m-5" />
-			<Pressable className="px-5 py-2 bg-purple-400 active:bg-purple-700 rounded-md">
-				<Text className="text-lg font-normal text-gray-400">Screen 381</Text>
+		<View className="absolute inset-0 p-4 bg-pink-100 rounded-full opacity-90">
+			<View className="size-13 bg-emerald-500 rounded-full" />
+			<View className={layout381.rhythm} />
+			<Pressable className="px-5 py-4 bg-purple-400 active:bg-purple-700 rounded-md">
+				<Text className="text-lg font-semibold text-gray-400">{copy381.title}</Text>
 			</Pressable>
-			<Text className="text-sm text-gray-700 italic underline tracking-normal">item-381</Text>
+			<Text className="text-sm text-gray-700 italic underline tracking-normal">
+				{copy381.detail} / {palette381.name}
+			</Text>
 		</View>
 	);
 }

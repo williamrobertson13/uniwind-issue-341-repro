@@ -1,14 +1,20 @@
-import { Text, View, Pressable } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+
+import { copy43 } from '../generated/copy/copy43';
+import { layout43 } from '../generated/layouts/layout43';
+import { palette43 } from '../generated/palettes/palette43';
 
 export function Screen43() {
 	return (
-		<View className="flex items-center justify-center p-2 bg-red-50 rounded-md ring-2 ring-red-300">
+		<View className="flex-row-reverse gap-1 p-5 bg-yellow-100 rounded shadow-lg">
 			<View className="size-11 bg-blue-800 rounded-full" />
-			<View className="absolute inset-0 p-4 bg-pink-100 rounded-full opacity-90 m-3" />
+			<View className={layout43.rhythm} />
 			<Pressable className="px-3 py-4 bg-purple-800 active:bg-purple-700 rounded-md">
-				<Text className="text-sm font-semibold text-gray-800">Screen 43</Text>
+				<Text className="text-sm font-medium text-gray-800">{copy43.title}</Text>
 			</Pressable>
-			<Text className="text-sm text-gray-700 italic underline tracking-wider">item-43</Text>
+			<Text className="text-sm text-gray-700 italic underline tracking-normal">
+				{copy43.detail} / {palette43.name}
+			</Text>
 		</View>
 	);
 }

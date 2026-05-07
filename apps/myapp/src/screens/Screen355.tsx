@@ -1,14 +1,20 @@
-import { Text, View, Pressable } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+
+import { copy355 } from '../generated/copy/copy355';
+import { layout355 } from '../generated/layouts/layout355';
+import { palette355 } from '../generated/palettes/palette355';
 
 export function Screen355() {
 	return (
-		<View className="flex items-center justify-center p-2 bg-red-50 rounded-md ring-2 ring-red-300">
-			<View className="size-11 bg-blue-500 rounded-full" />
-			<View className="absolute inset-0 p-4 bg-pink-100 rounded-full opacity-90 m-3" />
-			<Pressable className="px-3 py-4 bg-purple-500 active:bg-purple-700 rounded-md">
-				<Text className="text-sm font-light text-gray-500">Screen 355</Text>
+		<View className="flex-row-reverse gap-1 p-5 bg-yellow-100 rounded shadow-lg">
+			<View className="size-11 bg-blue-800 rounded-full" />
+			<View className={layout355.rhythm} />
+			<Pressable className="px-6 py-1 bg-purple-500 active:bg-purple-700 rounded-md">
+				<Text className="text-xl font-bold text-gray-500">{copy355.title}</Text>
 			</Pressable>
-			<Text className="text-sm text-gray-700 italic underline tracking-wider">item-355</Text>
+			<Text className="text-sm text-gray-700 italic underline tracking-normal">
+				{copy355.detail} / {palette355.name}
+			</Text>
 		</View>
 	);
 }

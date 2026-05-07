@@ -1,0 +1,20 @@
+import { Pressable, Text, View } from 'react-native';
+
+import { copy1164 } from '../generated/copy/copy1164';
+import { layout1164 } from '../generated/layouts/layout1164';
+import { palette1164 } from '../generated/palettes/palette1164';
+
+export function Screen1164() {
+	return (
+		<View className="flex-wrap gap-6 p-1 bg-purple-50 rounded-3xl border-dashed border-2">
+			<View className="size-4 bg-blue-100 rounded-full" />
+			<View className={layout1164.rhythm} />
+			<Pressable className="px-5 py-4 bg-purple-400 active:bg-purple-700 rounded-md">
+				<Text className="text-lg font-semibold text-gray-400">{copy1164.title}</Text>
+			</Pressable>
+			<Text className="text-sm text-gray-700 italic underline tracking-normal">
+				{copy1164.detail} / {palette1164.name}
+			</Text>
+		</View>
+	);
+}

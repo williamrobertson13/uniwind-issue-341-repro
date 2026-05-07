@@ -1,14 +1,20 @@
-import { Text, View, Pressable } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+
+import { copy236 } from '../generated/copy/copy236';
+import { layout236 } from '../generated/layouts/layout236';
+import { palette236 } from '../generated/palettes/palette236';
 
 export function Screen236() {
 	return (
-		<View className="flex-row-reverse gap-1 p-5 bg-yellow-100 rounded shadow-lg">
-			<View className="size-12 bg-blue-300 rounded-full" />
-			<View className="relative flex p-8 bg-indigo-50 rounded shadow-2xl m-4" />
-			<Pressable className="px-4 py-1 bg-purple-300 active:bg-purple-700 rounded-md">
-				<Text className="text-base font-normal text-gray-300">Screen 236</Text>
+		<View className="flex-wrap gap-6 p-1 bg-purple-50 rounded-3xl border-dashed border-2">
+			<View className="size-12 bg-blue-900 rounded-full" />
+			<View className={layout236.rhythm} />
+			<Pressable className="px-4 py-3 bg-purple-300 active:bg-purple-700 rounded-md">
+				<Text className="text-base font-medium text-gray-300">{copy236.title}</Text>
 			</Pressable>
-			<Text className="text-sm text-gray-700 italic underline tracking-tight">item-236</Text>
+			<Text className="text-sm text-gray-700 italic underline tracking-normal">
+				{copy236.detail} / {palette236.name}
+			</Text>
 		</View>
 	);
 }

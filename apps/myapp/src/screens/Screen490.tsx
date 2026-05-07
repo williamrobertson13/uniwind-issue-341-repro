@@ -1,14 +1,20 @@
-import { Text, View, Pressable } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+
+import { copy490 } from '../generated/copy/copy490';
+import { layout490 } from '../generated/layouts/layout490';
+import { palette490 } from '../generated/palettes/palette490';
 
 export function Screen490() {
 	return (
-		<View className="grid grid-cols-2 gap-4 p-3 bg-green-100 rounded-2xl">
-			<View className="size-14 bg-blue-500 rounded-full" />
-			<View className="flex-wrap gap-6 p-1 bg-purple-50 rounded-3xl border-dashed border-2 m-2" />
-			<Pressable className="px-6 py-3 bg-purple-500 active:bg-purple-700 rounded-md">
-				<Text className="text-xl font-light text-gray-500">Screen 490</Text>
+		<View className="flex items-center justify-center p-2 bg-red-50 rounded-md ring-2 ring-red-300">
+			<View className="size-14 bg-amber-500 rounded-full" />
+			<View className={layout490.rhythm} />
+			<Pressable className="px-6 py-1 bg-purple-500 active:bg-purple-700 rounded-md">
+				<Text className="text-xl font-bold text-gray-500">{copy490.title}</Text>
 			</Pressable>
-			<Text className="text-sm text-gray-700 italic underline tracking-wide">item-490</Text>
+			<Text className="text-sm text-gray-700 italic underline tracking-normal">
+				{copy490.detail} / {palette490.name}
+			</Text>
 		</View>
 	);
 }

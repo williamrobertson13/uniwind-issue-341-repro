@@ -1,14 +1,20 @@
-import { Text, View, Pressable } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+
+import { copy408 } from '../generated/copy/copy408';
+import { layout408 } from '../generated/layouts/layout408';
+import { palette408 } from '../generated/palettes/palette408';
 
 export function Screen408() {
 	return (
-		<View className="flex-row gap-2 p-4 bg-gray-100 rounded-lg shadow-md">
-			<View className="size-4 bg-blue-400 rounded-full" />
-			<View className="flex items-center justify-center p-2 bg-red-50 rounded-md ring-2 ring-red-300 m-0" />
-			<Pressable className="px-2 py-1 bg-purple-400 active:bg-purple-700 rounded-md">
-				<Text className="text-xs font-semibold text-gray-400">Screen 408</Text>
+		<View className="flex-col gap-3 p-6 bg-blue-50 rounded-xl border border-blue-200">
+			<View className="size-4 bg-blue-100 rounded-full" />
+			<View className={layout408.rhythm} />
+			<Pressable className="px-5 py-4 bg-purple-400 active:bg-purple-700 rounded-md">
+				<Text className="text-lg font-semibold text-gray-400">{copy408.title}</Text>
 			</Pressable>
-			<Text className="text-sm text-gray-700 italic underline tracking-tight">item-408</Text>
+			<Text className="text-sm text-gray-700 italic underline tracking-normal">
+				{copy408.detail} / {palette408.name}
+			</Text>
 		</View>
 	);
 }

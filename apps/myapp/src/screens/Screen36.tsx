@@ -1,14 +1,20 @@
-import { Text, View, Pressable } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+
+import { copy36 } from '../generated/copy/copy36';
+import { layout36 } from '../generated/layouts/layout36';
+import { palette36 } from '../generated/palettes/palette36';
 
 export function Screen36() {
 	return (
-		<View className="flex-row-reverse gap-1 p-5 bg-yellow-100 rounded shadow-lg">
+		<View className="flex-wrap gap-6 p-1 bg-purple-50 rounded-3xl border-dashed border-2">
 			<View className="size-4 bg-blue-100 rounded-full" />
-			<View className="relative flex p-8 bg-indigo-50 rounded shadow-2xl m-4" />
+			<View className={layout36.rhythm} />
 			<Pressable className="px-2 py-1 bg-purple-100 active:bg-purple-700 rounded-md">
-				<Text className="text-xs font-normal text-gray-100">Screen 36</Text>
+				<Text className="text-xs font-light text-gray-100">{copy36.title}</Text>
 			</Pressable>
-			<Text className="text-sm text-gray-700 italic underline tracking-tight">item-36</Text>
+			<Text className="text-sm text-gray-700 italic underline tracking-normal">
+				{copy36.detail} / {palette36.name}
+			</Text>
 		</View>
 	);
 }

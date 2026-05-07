@@ -1,14 +1,20 @@
-import { Text, View, Pressable } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+
+import { copy267 } from '../generated/copy/copy267';
+import { layout267 } from '../generated/layouts/layout267';
+import { palette267 } from '../generated/palettes/palette267';
 
 export function Screen267() {
 	return (
-		<View className="flex items-center justify-center p-2 bg-red-50 rounded-md ring-2 ring-red-300">
-			<View className="size-7 bg-blue-700 rounded-full" />
-			<View className="absolute inset-0 p-4 bg-pink-100 rounded-full opacity-90 m-3" />
-			<Pressable className="px-5 py-4 bg-purple-700 active:bg-purple-700 rounded-md">
-				<Text className="text-lg font-medium text-gray-700">Screen 267</Text>
+		<View className="flex-row-reverse gap-1 p-5 bg-yellow-100 rounded shadow-lg">
+			<View className="size-7 bg-blue-400 rounded-full" />
+			<View className={layout267.rhythm} />
+			<Pressable className="px-2 py-3 bg-purple-700 active:bg-purple-700 rounded-md">
+				<Text className="text-xs font-normal text-gray-700">{copy267.title}</Text>
 			</Pressable>
-			<Text className="text-sm text-gray-700 italic underline tracking-wider">item-267</Text>
+			<Text className="text-sm text-gray-700 italic underline tracking-normal">
+				{copy267.detail} / {palette267.name}
+			</Text>
 		</View>
 	);
 }

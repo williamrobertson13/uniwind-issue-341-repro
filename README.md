@@ -2,7 +2,7 @@
 
 Reproduction scaffold for [uni-stack/uniwind#341](https://github.com/uni-stack/uniwind/issues/341): `expo export -p web` fails on `ubuntu-latest` with a `SyntaxError` parsing `node_modules/uniwind/dist/{common,module}/components/web/metro-injected.js`.
 
-> **Status**: scaffold only — does not yet reproduce. The matrix below exhaustively varies the parts of a real-world Expo SDK 54 setup that seemed most likely to trigger the race, and all combinations pass cleanly. The trigger appears to require something more specific than these generic primitives.
+> **Status**: scaffold only — does not yet reproduce. The matrix below varies the parts of a real-world Expo SDK 54 setup that seemed most likely to trigger the race, while keeping this repository generic and free of downstream app code.
 
 ## What's been tried (all green)
 
@@ -15,6 +15,9 @@ Reproduction scaffold for [uni-stack/uniwind#341](https://github.com/uni-stack/u
 | pnpm workspace (deep `node_modules/.pnpm/` symlinked store) | pass |
 | `react-native-reanimated` + `gesture-handler` + `@shopify/react-native-skia` + `react-native-svg` | pass |
 | Sentry metro wrapper (`getSentryExpoConfig`), custom babel transformer wrapping default, `resolveRequest` passthrough | pass |
+| 1,400 generated screens + 4,200 generated helper/data modules | pending |
+| exact Expo/RN/Metro/Tailwind/Uniwind versions from a failing downstream stack | pending |
+| generic extension-like Metro resolver mode (`REPRO_EXTENSION_MODE=true`) | pending |
 
 ## Failing log (from the original report and downstream observations)
 
@@ -30,7 +33,7 @@ SyntaxError: node_modules/uniwind/dist/module/components/web/metro-injected.js:
 
 ## How to repro
 
-GitHub Actions workflow (`.github/workflows/repro.yml`) runs `expo export -p web --dev` three ways on `ubuntu-latest`:
+GitHub Actions workflow (`.github/workflows/repro.yml`) runs `expo export -p web --dev` three ways on `ubuntu-latest` with Node 24:
 
 | scenario        | flags                                                              |
 | --------------- | ------------------------------------------------------------------ |
@@ -38,12 +41,13 @@ GitHub Actions workflow (`.github/workflows/repro.yml`) runs `expo export -p web
 | graph-optimize  | `EXPO_UNSTABLE_METRO_OPTIMIZE_GRAPH=1`                             |
 | tree-shaking    | both `EXPO_UNSTABLE_TREE_SHAKING=1` + `EXPO_UNSTABLE_METRO_OPTIMIZE_GRAPH=1` |
 
-Each scenario runs 10 iterations with full cache clear (`dist`, `.expo`, `node_modules/.cache`) between each. `metro.config.js` forces `maxWorkers=8` to widen the race window.
+Each scenario runs 5 iterations with full cache clear (`dist`, `.expo`, `node_modules/.cache`) between each. `metro.config.js` forces `maxWorkers=8`, disables package exports by default, selectively re-enables them for generic Uniwind-related packages, and enables a generic extension-like resolver mode via `REPRO_EXTENSION_MODE=true`.
 
 ## Versions
 
-- expo `~54.0.31`
-- react-native `~0.81.5`
-- uniwind `^1.6.4`
-- tailwindcss `^4.2.1`
-- ubuntu-latest, node 22
+- expo `54.0.31`
+- @expo/metro-config `54.0.13`
+- react-native `0.81.5`
+- uniwind `1.6.4`
+- tailwindcss `4.2.2`
+- ubuntu-latest, node 24

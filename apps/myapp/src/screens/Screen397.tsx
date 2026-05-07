@@ -1,14 +1,20 @@
-import { Text, View, Pressable } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+
+import { copy397 } from '../generated/copy/copy397';
+import { layout397 } from '../generated/layouts/layout397';
+import { palette397 } from '../generated/palettes/palette397';
 
 export function Screen397() {
 	return (
-		<View className="flex-wrap gap-6 p-1 bg-purple-50 rounded-3xl border-dashed border-2">
+		<View className="absolute inset-0 p-4 bg-pink-100 rounded-full opacity-90">
 			<View className="size-5 bg-blue-200 rounded-full" />
-			<View className="flex-row gap-2 p-4 bg-gray-100 rounded-lg shadow-md m-5" />
+			<View className={layout397.rhythm} />
 			<Pressable className="px-3 py-2 bg-purple-200 active:bg-purple-700 rounded-md">
-				<Text className="text-sm font-medium text-gray-200">Screen 397</Text>
+				<Text className="text-sm font-normal text-gray-200">{copy397.title}</Text>
 			</Pressable>
-			<Text className="text-sm text-gray-700 italic underline tracking-normal">item-397</Text>
+			<Text className="text-sm text-gray-700 italic underline tracking-normal">
+				{copy397.detail} / {palette397.name}
+			</Text>
 		</View>
 	);
 }

@@ -1,14 +1,20 @@
-import { Text, View, Pressable } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+
+import { copy280 } from '../generated/copy/copy280';
+import { layout280 } from '../generated/layouts/layout280';
+import { palette280 } from '../generated/palettes/palette280';
 
 export function Screen280() {
 	return (
-		<View className="flex-row gap-2 p-4 bg-gray-100 rounded-lg shadow-md">
-			<View className="size-8 bg-blue-200 rounded-full" />
-			<View className="flex items-center justify-center p-2 bg-red-50 rounded-md ring-2 ring-red-300 m-0" />
-			<Pressable className="px-6 py-1 bg-purple-200 active:bg-purple-700 rounded-md">
-				<Text className="text-xl font-light text-gray-200">Screen 280</Text>
+		<View className="flex-col gap-3 p-6 bg-blue-50 rounded-xl border border-blue-200">
+			<View className="size-8 bg-blue-500 rounded-full" />
+			<View className={layout280.rhythm} />
+			<Pressable className="px-3 py-2 bg-purple-200 active:bg-purple-700 rounded-md">
+				<Text className="text-sm font-normal text-gray-200">{copy280.title}</Text>
 			</Pressable>
-			<Text className="text-sm text-gray-700 italic underline tracking-tight">item-280</Text>
+			<Text className="text-sm text-gray-700 italic underline tracking-normal">
+				{copy280.detail} / {palette280.name}
+			</Text>
 		</View>
 	);
 }

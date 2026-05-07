@@ -1,0 +1,20 @@
+import { Pressable, Text, View } from 'react-native';
+
+import { copy1020 } from '../generated/copy/copy1020';
+import { layout1020 } from '../generated/layouts/layout1020';
+import { palette1020 } from '../generated/palettes/palette1020';
+
+export function Screen1020() {
+	return (
+		<View className="flex-wrap gap-6 p-1 bg-purple-50 rounded-3xl border-dashed border-2">
+			<View className="size-4 bg-blue-100 rounded-full" />
+			<View className={layout1020.rhythm} />
+			<Pressable className="px-5 py-4 bg-purple-400 active:bg-purple-700 rounded-md">
+				<Text className="text-lg font-semibold text-gray-400">{copy1020.title}</Text>
+			</Pressable>
+			<Text className="text-sm text-gray-700 italic underline tracking-normal">
+				{copy1020.detail} / {palette1020.name}
+			</Text>
+		</View>
+	);
+}

@@ -1,14 +1,20 @@
-import { Text, View, Pressable } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
+
+import { copy123 } from '../generated/copy/copy123';
+import { layout123 } from '../generated/layouts/layout123';
+import { palette123 } from '../generated/palettes/palette123';
 
 export function Screen123() {
 	return (
-		<View className="flex items-center justify-center p-2 bg-red-50 rounded-md ring-2 ring-red-300">
-			<View className="size-7 bg-blue-700 rounded-full" />
-			<View className="absolute inset-0 p-4 bg-pink-100 rounded-full opacity-90 m-3" />
-			<Pressable className="px-5 py-4 bg-purple-700 active:bg-purple-700 rounded-md">
-				<Text className="text-lg font-semibold text-gray-700">Screen 123</Text>
+		<View className="flex-row-reverse gap-1 p-5 bg-yellow-100 rounded shadow-lg">
+			<View className="size-7 bg-blue-400 rounded-full" />
+			<View className={layout123.rhythm} />
+			<Pressable className="px-2 py-3 bg-purple-700 active:bg-purple-700 rounded-md">
+				<Text className="text-xs font-normal text-gray-700">{copy123.title}</Text>
 			</Pressable>
-			<Text className="text-sm text-gray-700 italic underline tracking-wider">item-123</Text>
+			<Text className="text-sm text-gray-700 italic underline tracking-normal">
+				{copy123.detail} / {palette123.name}
+			</Text>
 		</View>
 	);
 }
