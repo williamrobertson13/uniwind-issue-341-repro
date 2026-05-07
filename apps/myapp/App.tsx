@@ -1,8 +1,9 @@
 import { StatusBar } from 'expo-status-bar';
-import { ScrollView, Text } from 'react-native';
 import { Uniwind } from 'uniwind';
+import { ScrollView, Text } from 'uniwind/components';
 
 import { HeavyScreen } from './src/HeavyScreen';
+import { UniwindRuntimeStress } from './src/UniwindRuntimeStress';
 import { Screen1 } from './src/screens/Screen1';
 import { Screen2 } from './src/screens/Screen2';
 import { Screen3 } from './src/screens/Screen3';
@@ -1413,6 +1414,7 @@ export default function App() {
 		<ScrollView className="flex-1 bg-white p-4">
 			<Text className="text-2xl font-bold text-gray-900">Uniwind CI repro</Text>
 			<HeavyScreen />
+			<UniwindRuntimeStress />
 			{screens.map((Screen, index) => (
 				<Screen key={index} />
 			))}

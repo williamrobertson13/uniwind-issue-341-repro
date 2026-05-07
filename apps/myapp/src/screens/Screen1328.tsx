@@ -1,19 +1,25 @@
-import { Pressable, Text, View } from 'react-native';
+import { withUniwind, useCSSVariable, useResolveClassNames } from 'uniwind';
+import { Pressable, Text, View } from 'uniwind/components';
 
 import { copy1328 } from '../generated/copy/copy1328';
 import { layout1328 } from '../generated/layouts/layout1328';
 import { palette1328 } from '../generated/palettes/palette1328';
 
+const RuntimeView1328 = withUniwind(View);
+
 export function Screen1328() {
+	const tone = useCSSVariable('--color-content-primary');
+	const resolvedStyle = useResolveClassNames('text-2xl font-light text-gray-600');
+
 	return (
 		<View className="flex-col gap-3 p-6 bg-blue-50 rounded-xl border border-blue-200">
 			<View className="size-12 bg-blue-900 rounded-full" />
-			<View className={layout1328.rhythm} />
+			<RuntimeView1328 styleClassName={layout1328.rhythm} />
 			<Pressable className="px-7 py-2 bg-purple-600 active:bg-purple-700 rounded-md">
-				<Text className="text-2xl font-light text-gray-600">{copy1328.title}</Text>
+				<Text className="text-2xl font-light text-gray-600" style={resolvedStyle}>{copy1328.title}</Text>
 			</Pressable>
 			<Text className="text-sm text-gray-700 italic underline tracking-normal">
-				{copy1328.detail} / {palette1328.name}
+				{copy1328.detail} / {palette1328.name} / {String(tone ?? 'unset')}
 			</Text>
 		</View>
 	);

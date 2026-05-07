@@ -112,22 +112,28 @@ for (let index = 1; index <= SCREEN_COUNT; index += 1) {
 
 	write(
 		path.join(SCREEN_DIR, `Screen${index}.tsx`),
-		`import { Pressable, Text, View } from 'react-native';
+		`import { withUniwind, useCSSVariable, useResolveClassNames } from 'uniwind';
+import { Pressable, Text, View } from 'uniwind/components';
 
 import { copy${index} } from '../generated/copy/copy${index}';
 import { layout${index} } from '../generated/layouts/layout${index}';
 import { palette${index} } from '../generated/palettes/palette${index}';
 
+const RuntimeView${index} = withUniwind(View);
+
 export function Screen${index}() {
+	const tone = useCSSVariable('--color-content-primary');
+	const resolvedStyle = useResolveClassNames('${pick(textClasses, index)}');
+
 	return (
 		<View className="${pick(containerClasses, index)}">
 			<View className="${pick(swatchClasses, index)}" />
-			<View className={layout${index}.rhythm} />
+			<RuntimeView${index} styleClassName={layout${index}.rhythm} />
 			<Pressable className="${pick(buttonClasses, index)}">
-				<Text className="${pick(textClasses, index)}">{copy${index}.title}</Text>
+				<Text className="${pick(textClasses, index)}" style={resolvedStyle}>{copy${index}.title}</Text>
 			</Pressable>
 			<Text className="text-sm text-gray-700 italic underline tracking-normal">
-				{copy${index}.detail} / {palette${index}.name}
+				{copy${index}.detail} / {palette${index}.name} / {String(tone ?? 'unset')}
 			</Text>
 		</View>
 	);
@@ -146,10 +152,11 @@ const screenList = Array.from({ length: SCREEN_COUNT }, (_, i) => `Screen${i + 1
 write(
 	path.join(APP_DIR, 'App.tsx'),
 	`import { StatusBar } from 'expo-status-bar';
-import { ScrollView, Text } from 'react-native';
 import { Uniwind } from 'uniwind';
+import { ScrollView, Text } from 'uniwind/components';
 
 import { HeavyScreen } from './src/HeavyScreen';
+import { UniwindRuntimeStress } from './src/UniwindRuntimeStress';
 ${imports}
 
 const screens = [${screenList}];
@@ -161,6 +168,7 @@ export default function App() {
 		<ScrollView className="flex-1 bg-white p-4">
 			<Text className="text-2xl font-bold text-gray-900">Uniwind CI repro</Text>
 			<HeavyScreen />
+			<UniwindRuntimeStress />
 			{screens.map((Screen, index) => (
 				<Screen key={index} />
 			))}

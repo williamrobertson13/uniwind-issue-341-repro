@@ -1,19 +1,25 @@
-import { Pressable, Text, View } from 'react-native';
+import { withUniwind, useCSSVariable, useResolveClassNames } from 'uniwind';
+import { Pressable, Text, View } from 'uniwind/components';
 
 import { copy1098 } from '../generated/copy/copy1098';
 import { layout1098 } from '../generated/layouts/layout1098';
 import { palette1098 } from '../generated/palettes/palette1098';
 
+const RuntimeView1098 = withUniwind(View);
+
 export function Screen1098() {
+	const tone = useCSSVariable('--color-content-primary');
+	const resolvedStyle = useResolveClassNames('text-xs font-light text-gray-100');
+
 	return (
 		<View className="flex items-center justify-center p-2 bg-red-50 rounded-md ring-2 ring-red-300">
 			<View className="size-10 bg-blue-700 rounded-full" />
-			<View className={layout1098.rhythm} />
+			<RuntimeView1098 styleClassName={layout1098.rhythm} />
 			<Pressable className="px-2 py-1 bg-purple-100 active:bg-purple-700 rounded-md">
-				<Text className="text-xs font-light text-gray-100">{copy1098.title}</Text>
+				<Text className="text-xs font-light text-gray-100" style={resolvedStyle}>{copy1098.title}</Text>
 			</Pressable>
 			<Text className="text-sm text-gray-700 italic underline tracking-normal">
-				{copy1098.detail} / {palette1098.name}
+				{copy1098.detail} / {palette1098.name} / {String(tone ?? 'unset')}
 			</Text>
 		</View>
 	);

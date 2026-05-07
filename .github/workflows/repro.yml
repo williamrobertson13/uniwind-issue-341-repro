@@ -44,7 +44,6 @@ jobs:
       - name: Export web --dev (5x, full cache clear)
         env:
           EXPO_USE_FAST_RESOLVER: '1'
-          REPRO_EXTENSION_MODE: 'true'
         run: |
           for i in 1 2 3 4 5; do
             echo "::group::iteration $i"

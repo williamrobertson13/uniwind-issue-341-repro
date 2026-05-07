@@ -1,19 +1,25 @@
-import { Pressable, Text, View } from 'react-native';
+import { withUniwind, useCSSVariable, useResolveClassNames } from 'uniwind';
+import { Pressable, Text, View } from 'uniwind/components';
 
 import { copy405 } from '../generated/copy/copy405';
 import { layout405 } from '../generated/layouts/layout405';
 import { palette405 } from '../generated/palettes/palette405';
 
+const RuntimeView405 = withUniwind(View);
+
 export function Screen405() {
+	const tone = useCSSVariable('--color-content-primary');
+	const resolvedStyle = useResolveClassNames('text-xs font-light text-gray-100');
+
 	return (
 		<View className="absolute inset-0 p-4 bg-pink-100 rounded-full opacity-90">
 			<View className="size-13 bg-emerald-500 rounded-full" />
-			<View className={layout405.rhythm} />
+			<RuntimeView405 styleClassName={layout405.rhythm} />
 			<Pressable className="px-2 py-1 bg-purple-100 active:bg-purple-700 rounded-md">
-				<Text className="text-xs font-light text-gray-100">{copy405.title}</Text>
+				<Text className="text-xs font-light text-gray-100" style={resolvedStyle}>{copy405.title}</Text>
 			</Pressable>
 			<Text className="text-sm text-gray-700 italic underline tracking-normal">
-				{copy405.detail} / {palette405.name}
+				{copy405.detail} / {palette405.name} / {String(tone ?? 'unset')}
 			</Text>
 		</View>
 	);

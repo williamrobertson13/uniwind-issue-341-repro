@@ -1,19 +1,25 @@
-import { Pressable, Text, View } from 'react-native';
+import { withUniwind, useCSSVariable, useResolveClassNames } from 'uniwind';
+import { Pressable, Text, View } from 'uniwind/components';
 
 import { copy349 } from '../generated/copy/copy349';
 import { layout349 } from '../generated/layouts/layout349';
 import { palette349 } from '../generated/palettes/palette349';
 
+const RuntimeView349 = withUniwind(View);
+
 export function Screen349() {
+	const tone = useCSSVariable('--color-content-primary');
+	const resolvedStyle = useResolveClassNames('text-sm font-medium text-gray-800');
+
 	return (
 		<View className="absolute inset-0 p-4 bg-pink-100 rounded-full opacity-90">
 			<View className="size-5 bg-blue-200 rounded-full" />
-			<View className={layout349.rhythm} />
+			<RuntimeView349 styleClassName={layout349.rhythm} />
 			<Pressable className="px-3 py-4 bg-purple-800 active:bg-purple-700 rounded-md">
-				<Text className="text-sm font-medium text-gray-800">{copy349.title}</Text>
+				<Text className="text-sm font-medium text-gray-800" style={resolvedStyle}>{copy349.title}</Text>
 			</Pressable>
 			<Text className="text-sm text-gray-700 italic underline tracking-normal">
-				{copy349.detail} / {palette349.name}
+				{copy349.detail} / {palette349.name} / {String(tone ?? 'unset')}
 			</Text>
 		</View>
 	);
