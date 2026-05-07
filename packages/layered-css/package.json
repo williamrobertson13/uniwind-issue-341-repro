@@ -1,0 +1,22 @@
+{
+	"name": "@repro/layered-css",
+	"version": "1.0.0",
+	"private": true,
+	"description": "Generic package-exported CSS fixture for the Uniwind Metro repro.",
+	"exports": {
+		"./layered-styles": {
+			"import": "./dist/layered-styles.css",
+			"require": "./dist/layered-styles.css",
+			"default": "./dist/layered-styles.css"
+		},
+		"./layered-styles.css": {
+			"import": "./dist/layered-styles.css",
+			"require": "./dist/layered-styles.css",
+			"default": "./dist/layered-styles.css"
+		}
+	},
+	"style": "./dist/layered-styles.css",
+	"files": [
+		"dist"
+	]
+}

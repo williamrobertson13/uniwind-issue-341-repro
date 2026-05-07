@@ -1,7 +1,7 @@
 const { getSentryExpoConfig } = require('@sentry/react-native/metro');
 const { withUniwindConfig } = require('uniwind/metro');
 
-const packagesNeedingExports = ['uniwind', 'culori'];
+const packagesNeedingExports = ['uniwind', 'culori', '@repro/layered-css'];
 
 module.exports = (() => {
 	/** @type {import('expo/metro-config').MetroConfig} */
