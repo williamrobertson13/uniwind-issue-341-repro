@@ -18,6 +18,7 @@ Reproduction scaffold for [uni-stack/uniwind#341](https://github.com/uni-stack/u
 | 1,400 generated screens + 4,200 generated helper/data modules | pass |
 | exact Expo/RN/Metro/Tailwind/Uniwind versions from a failing downstream stack | pass |
 | generic extension-like Metro resolver mode (`REPRO_EXTENSION_MODE=true`) | pass |
+| Expo Router entry with `src/app` root | pending |
 
 ## Failing log (from the original report and downstream observations)
 
@@ -47,6 +48,7 @@ Each scenario runs 5 iterations with full cache clear (`dist`, `.expo`, `node_mo
 
 - expo `54.0.31`
 - @expo/metro-config `54.0.13`
+- expo-router `6.0.23`
 - react-native `0.81.5`
 - uniwind `1.6.4`
 - tailwindcss `4.2.2`
