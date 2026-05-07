@@ -1,6 +1,8 @@
 # uniwind issue #341 repro
 
-Minimal reproduction for [uni-stack/uniwind#341](https://github.com/uni-stack/uniwind/issues/341): `expo export -p web` fails on `ubuntu-latest` with a `SyntaxError` parsing `node_modules/uniwind/dist/{common,module}/components/web/metro-injected.js`.
+Reproduction scaffold for [uni-stack/uniwind#341](https://github.com/uni-stack/uniwind/issues/341): `expo export -p web` fails on `ubuntu-latest` with a `SyntaxError` parsing `node_modules/uniwind/dist/{common,module}/components/web/metro-injected.js`.
+
+> **Status**: scaffold only — does not yet reproduce. 100 generated screens × 5 iterations × 3 flag scenarios all pass. The slush wallet repo (~5000+ modules) hits the bug reliably; this minimal project does not. Suspected the race window scales with module count / dep graph complexity. PRs welcome to push the failure rate up.
 
 ## Failing log
 
