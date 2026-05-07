@@ -5,18 +5,18 @@
 	"description": "Generic package-exported CSS fixture for the Uniwind Metro repro.",
 	"exports": {
 		"./layered-styles": {
-			"import": "./dist/layered-styles.css",
-			"require": "./dist/layered-styles.css",
-			"default": "./dist/layered-styles.css"
+			"import": "./styles/layered-styles.css",
+			"require": "./styles/layered-styles.css",
+			"default": "./styles/layered-styles.css"
 		},
 		"./layered-styles.css": {
-			"import": "./dist/layered-styles.css",
-			"require": "./dist/layered-styles.css",
-			"default": "./dist/layered-styles.css"
+			"import": "./styles/layered-styles.css",
+			"require": "./styles/layered-styles.css",
+			"default": "./styles/layered-styles.css"
 		}
 	},
-	"style": "./dist/layered-styles.css",
+	"style": "./styles/layered-styles.css",
 	"files": [
-		"dist"
+		"styles"
 	]
 }
