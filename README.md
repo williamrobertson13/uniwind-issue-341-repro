@@ -2,7 +2,19 @@
 
 Reproduction scaffold for [uni-stack/uniwind#341](https://github.com/uni-stack/uniwind/issues/341): `expo export -p web` fails on `ubuntu-latest` with a `SyntaxError` parsing `node_modules/uniwind/dist/{common,module}/components/web/metro-injected.js`.
 
-> **Status**: scaffold only — does not yet reproduce. 500 generated screens × 10 iterations × 3 flag scenarios × `maxWorkers=8` all pass on `ubuntu-latest`. PRs welcome to push the failure rate up.
+> **Status**: scaffold only — does not yet reproduce. The matrix below exhaustively varies the parts of a real-world Expo SDK 54 setup that seemed most likely to trigger the race, and all combinations pass cleanly. The trigger appears to require something more specific than these generic primitives.
+
+## What's been tried (all green)
+
+| variant | result |
+| --- | --- |
+| 100 screens, npm, hosted runner | pass |
+| 500 diverse screens × 10 cold iterations × `maxWorkers=8` | pass |
+| `expo export -p web --dev` (matches reported flag) | pass |
+| `container: node:22` + `npm ci` (matches original report) | pass |
+| pnpm workspace (deep `node_modules/.pnpm/` symlinked store) | pass |
+| `react-native-reanimated` + `gesture-handler` + `@shopify/react-native-skia` + `react-native-svg` | pass |
+| Sentry metro wrapper (`getSentryExpoConfig`), custom babel transformer wrapping default, `resolveRequest` passthrough | pass |
 
 ## Failing log (from the original report and downstream observations)
 
