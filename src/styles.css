@@ -1,0 +1,11 @@
+@import 'tailwindcss';
+@import 'uniwind';
+
+@custom-variant purple-dark (&:where(.purple-dark, .purple-dark *));
+@custom-variant purple-light (&:where(.purple-light, .purple-light *));
+@custom-variant blue-dark (&:where(.blue-dark, .blue-dark *));
+@custom-variant blue-light (&:where(.blue-light, .blue-light *));
+@custom-variant orange-dark (&:where(.orange-dark, .orange-dark *));
+@custom-variant orange-light (&:where(.orange-light, .orange-light *));
+@custom-variant yellow-dark (&:where(.yellow-dark, .yellow-dark *));
+@custom-variant yellow-light (&:where(.yellow-light, .yellow-light *));

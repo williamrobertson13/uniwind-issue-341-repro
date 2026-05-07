@@ -1,0 +1,35 @@
+name: repro
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        scenario:
+          - name: default
+            env: ''
+          - name: tree-shaking
+            env: 'EXPO_UNSTABLE_TREE_SHAKING=1'
+          - name: graph-optimize
+            env: 'EXPO_UNSTABLE_METRO_OPTIMIZE_GRAPH=1'
+          - name: both
+            env: 'EXPO_UNSTABLE_TREE_SHAKING=1 EXPO_UNSTABLE_METRO_OPTIMIZE_GRAPH=1'
+    name: build (${{ matrix.scenario.name }})
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install
+        run: npm install
+
+      - name: Export web
+        run: ${{ matrix.scenario.env }} npx expo export -p web

@@ -1,0 +1,12 @@
+{
+	"expo": {
+		"name": "uniwind-issue-341-repro",
+		"slug": "uniwind-issue-341-repro",
+		"version": "1.0.0",
+		"orientation": "portrait",
+		"userInterfaceStyle": "light",
+		"web": {
+			"bundler": "metro"
+		}
+	}
+}
