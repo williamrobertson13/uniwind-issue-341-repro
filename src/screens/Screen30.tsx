@@ -2,14 +2,13 @@ import { Text, View, Pressable } from 'react-native';
 
 export function Screen30() {
 	return (
-		<View className="flex-row gap-2 p-4 bg-gray-3000 rounded-lg shadow-md">
-			<View className="size-10 bg-blue-500 rounded-full border-2 border-white" />
-			<View className="size-12 bg-red-500 rounded-xl rotate-45" />
-			<View className="size-8 bg-green-500 rounded-full opacity-75" />
-			<Pressable className="px-4 py-2 bg-purple-600 active:bg-purple-700 rounded-md">
-				<Text className="text-base font-semibold text-white">Screen 30</Text>
+		<View className="absolute inset-0 p-4 bg-pink-100 rounded-full opacity-90">
+			<View className="size-10 bg-blue-400 rounded-full" />
+			<View className="flex-col gap-3 p-6 bg-blue-50 rounded-xl border border-blue-200 m-6" />
+			<Pressable className="px-2 py-3 bg-purple-400 active:bg-purple-700 rounded-md">
+				<Text className="text-xs font-light text-gray-400">Screen 30</Text>
 			</Pressable>
-			<Text className="text-sm text-gray-700 italic underline">item-30</Text>
+			<Text className="text-sm text-gray-700 italic underline tracking-wide">item-30</Text>
 		</View>
 	);
 }

@@ -2,14 +2,13 @@ import { Text, View, Pressable } from 'react-native';
 
 export function Screen82() {
 	return (
-		<View className="flex-row gap-2 p-4 bg-gray-8200 rounded-lg shadow-md">
-			<View className="size-10 bg-blue-500 rounded-full border-2 border-white" />
-			<View className="size-12 bg-red-500 rounded-xl rotate-45" />
-			<View className="size-8 bg-green-500 rounded-full opacity-75" />
-			<Pressable className="px-4 py-2 bg-purple-600 active:bg-purple-700 rounded-md">
-				<Text className="text-base font-semibold text-white">Screen 82</Text>
+		<View className="grid grid-cols-2 gap-4 p-3 bg-green-100 rounded-2xl">
+			<View className="size-14 bg-blue-200 rounded-full" />
+			<View className="flex-wrap gap-6 p-1 bg-purple-50 rounded-3xl border-dashed border-2 m-2" />
+			<Pressable className="px-6 py-3 bg-purple-200 active:bg-purple-700 rounded-md">
+				<Text className="text-xl font-medium text-gray-200">Screen 82</Text>
 			</Pressable>
-			<Text className="text-sm text-gray-700 italic underline">item-82</Text>
+			<Text className="text-sm text-gray-700 italic underline tracking-wide">item-82</Text>
 		</View>
 	);
 }

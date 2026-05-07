@@ -29,10 +29,13 @@ jobs:
       - name: Install
         run: npm install --legacy-peer-deps
 
-      - name: Export web (5x)
+      - name: Export web (10x, full cache clear)
+        env:
+          EXPO_USE_FAST_RESOLVER: '1'
         run: |
-          for i in 1 2 3 4 5; do
-            echo "=== iteration $i ==="
-            rm -rf dist .expo
+          for i in 1 2 3 4 5 6 7 8 9 10; do
+            echo "::group::iteration $i"
+            rm -rf dist .expo node_modules/.cache /tmp/metro-cache
             ${{ matrix.scenario.env }} npx expo export -p web
+            echo "::endgroup::"
           done

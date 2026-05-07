@@ -5,6 +5,9 @@ module.exports = (() => {
 	/** @type {import('expo/metro-config').MetroConfig} */
 	const config = getDefaultConfig(__dirname);
 
+	// Force high worker count to widen the race window for uniwind#341
+	config.maxWorkers = 8;
+
 	config.transformer.getTransformOptions = async () => ({
 		transform: {
 			experimentalImportSupport: true,
