@@ -2,16 +2,14 @@
 
 Reproduction scaffold for [uni-stack/uniwind#341](https://github.com/uni-stack/uniwind/issues/341): `expo export -p web` fails on `ubuntu-latest` with a `SyntaxError` parsing `node_modules/uniwind/dist/{common,module}/components/web/metro-injected.js`.
 
-> **Status**: scaffold only — does not yet reproduce. 100 generated screens × 5 iterations × 3 flag scenarios all pass. The slush wallet repo (~5000+ modules) hits the bug reliably; this minimal project does not. Suspected the race window scales with module count / dep graph complexity. PRs welcome to push the failure rate up.
+> **Status**: scaffold only — does not yet reproduce. 500 generated screens × 10 iterations × 3 flag scenarios × `maxWorkers=8` all pass on `ubuntu-latest`. PRs welcome to push the failure rate up.
 
-## Failing log
+## Failing log (from the original report and downstream observations)
 
 ```
 Web Bundling failed XXXms index.web.tsx (XXXX modules)
 SyntaxError: node_modules/uniwind/dist/module/components/web/metro-injected.js:
-  Missing closing } at &:not(:where(.light, .light *, .dark, .dark *,
-    .purple-dark, .purple-dark *, .purple-light, .purple-light *,
-    ...))
+  Missing closing } at &:not(:where(.light, .light *, .dark, .dark *, ...))
 ```
 
 ## Theory
@@ -20,16 +18,15 @@ SyntaxError: node_modules/uniwind/dist/module/components/web/metro-injected.js:
 
 ## How to repro
 
-GitHub Actions workflow (`.github/workflows/repro.yml`) runs `expo export -p web` four ways on `ubuntu-latest`:
+GitHub Actions workflow (`.github/workflows/repro.yml`) runs `expo export -p web --dev` three ways on `ubuntu-latest`:
 
 | scenario        | flags                                                              |
 | --------------- | ------------------------------------------------------------------ |
 | default         | (none)                                                             |
-| tree-shaking    | `EXPO_UNSTABLE_TREE_SHAKING=1`                                     |
 | graph-optimize  | `EXPO_UNSTABLE_METRO_OPTIMIZE_GRAPH=1`                             |
-| both            | both flags set                                                     |
+| tree-shaking    | both `EXPO_UNSTABLE_TREE_SHAKING=1` + `EXPO_UNSTABLE_METRO_OPTIMIZE_GRAPH=1` |
 
-The `default` run mirrors the original issue. The other three test whether the new SDK 54 bundler optimizations widen the race window — that's the configuration that hit the same error in the slush wallet ([MystenLabs/slush#2441](https://github.com/MystenLabs/slush/pull/2441)).
+Each scenario runs 10 iterations with full cache clear (`dist`, `.expo`, `node_modules/.cache`) between each. `metro.config.js` forces `maxWorkers=8` to widen the race window.
 
 ## Versions
 
@@ -38,9 +35,3 @@ The `default` run mirrors the original issue. The other three test whether the n
 - uniwind `^1.6.4`
 - tailwindcss `^4.2.1`
 - ubuntu-latest, node 22
-
-## Related
-
-- [uni-stack/uniwind#341](https://github.com/uni-stack/uniwind/issues/341) — original bug report
-- [MystenLabs/slush#2588](https://github.com/MystenLabs/slush/pull/2588) — attempted fix in slush via `maxWorkers=1` + uniwind 1.6.3 (closed; "didn't work")
-- [MystenLabs/slush#2441](https://github.com/MystenLabs/slush/pull/2441) — slush PR that re-triggered the issue when enabling `EXPO_UNSTABLE_TREE_SHAKING=1`
