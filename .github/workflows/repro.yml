@@ -9,6 +9,9 @@ jobs:
   build:
     runs-on: ubuntu-latest
     container: node:22
+    defaults:
+      run:
+        working-directory: apps/myapp
     strategy:
       fail-fast: false
       matrix:
@@ -23,8 +26,15 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+          run_install: false
+
       - name: Install
-        run: npm ci --legacy-peer-deps
+        working-directory: ${{ github.workspace }}
+        run: pnpm install --frozen-lockfile
 
       - name: Export web --dev (10x, full cache clear)
         env:
@@ -33,6 +43,6 @@ jobs:
           for i in 1 2 3 4 5 6 7 8 9 10; do
             echo "::group::iteration $i"
             rm -rf dist .expo node_modules/.cache /tmp/metro-cache
-            ${{ matrix.scenario.env }} npx expo export -p web --dev
+            ${{ matrix.scenario.env }} pnpm exec expo export -p web --dev
             echo "::endgroup::"
           done
