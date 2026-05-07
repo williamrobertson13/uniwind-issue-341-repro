@@ -8,8 +8,6 @@ module.exports = (() => {
 	// Force high worker count to widen the race window for uniwind#341
 	config.maxWorkers = 8;
 
-	config.resolver.unstable_enablePackageExports = false;
-
 	config.transformer.babelTransformerPath = require.resolve('./metro.transform');
 
 	config.transformer.getTransformOptions = async () => ({
