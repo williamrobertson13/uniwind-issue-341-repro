@@ -1,0 +1,47 @@
+name: concurrent-metro
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+# Companion to .github/workflows/stress.yml. Where `stress.yml` exercises
+# uniwind's `transform()` from a controlled harness, this workflow runs
+# multiple *real* `expo export -p web` builds in parallel against the
+# same `node_modules/uniwind/uniwind.css` — purely through
+# `withUniwindConfig` and Metro, no extra scripts. Each build's natural
+# `injectThemes` → `buildCSS` → non-atomic `fs.writeFileSync` calls
+# contend for the same file, exposing the same race uniwind#341
+# downstream hits inside a single very-large bundle.
+
+jobs:
+  concurrent:
+    name: N=${{ matrix.n }} concurrent expo builds
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        attempt: [1, 2, 3]
+        n: [8]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.16.1
+          run_install: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: ${{ matrix.n }} concurrent expo exports
+        env:
+          N: ${{ matrix.n }}
+        run: bash scripts/concurrent-metro.sh

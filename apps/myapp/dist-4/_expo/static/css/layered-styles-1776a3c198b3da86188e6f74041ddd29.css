@@ -1,0 +1,44 @@
+@layer repro-defaults {
+  :where([data-repro-layer]:not([data-repro-hidden])) {
+    --repro-layer-state: initial;
+    box-sizing: border-box;
+    position: relative;
+  }
+
+  :where([data-repro-layer="sheet"]) {
+    --repro-layer-offset: max(16px, env(safe-area-inset-bottom));
+    overscroll-behavior: contain;
+    position: fixed;
+    inset: auto 0 0;
+  }
+
+  :where([data-repro-layer="sheet"]:has([data-repro-snap="open"])) {
+    transform: translateY(0);
+  }
+
+  :where([data-repro-layer="sheet"]:not(:has([data-repro-snap="open"]))) {
+    transform: translateY(calc(100% - var(--repro-layer-offset)));
+  }
+
+  :where([data-repro-layer="overlay"]) {
+    pointer-events: none;
+    background: linear-gradient(#0a0c106b, #0a0c10b8), radial-gradient(circle at top, #ffffff14, #0000 36rem);
+    position: fixed;
+    inset: 0;
+  }
+
+  :where([data-repro-layer="scroll"]) {
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  :where([data-repro-layer="scroll"])::-webkit-scrollbar {
+    display: none;
+  }
+
+  @supports (height: 100dvh) {
+    :where([data-repro-layer="sheet"]) {
+      max-height: calc(100dvh - var(--repro-layer-offset));
+    }
+  }
+}

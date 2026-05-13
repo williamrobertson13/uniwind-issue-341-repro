@@ -1,0 +1,11 @@
+@layer repro-runtime {
+  :where([data-repro-layer="runtime"]) {
+    --runtime-layer-color: color-mix(in srgb, var(--color-content-primary), transparent 18%);
+    color: var(--runtime-layer-color);
+    contain: layout paint style;
+  }
+
+  :where([data-repro-layer="runtime"]:not([data-disabled="true"])) {
+    outline: 1px solid color-mix(in srgb, currentColor, transparent 70%);
+  }
+}
