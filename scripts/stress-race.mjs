@@ -1,26 +1,31 @@
 #!/usr/bin/env node
 // Stress test for uni-stack/uniwind#341
 //
-// Spawns N writer processes that each call uniwind's internal `buildCSS`
-// in a tight loop. `buildCSS` does a non-atomic `fs.writeFileSync` on
-// `node_modules/uniwind/uniwind.css`. In Metro, this is called once per
-// transform of `components/web/metro-injected.js` and once per transform
-// of the CSS entry file; here we exercise the same code path directly to
-// widen the race window into something reliably observable.
+// Spawns N writer processes that each call uniwind's public Metro
+// transformer entry point:
 //
-// A reader process repeatedly reads `uniwind.css` and parses it with
-// `lightningcss` (the same parser Tailwind/uniwind use). Any failed parse
-// is a torn read — the same root cause as the bundle errors reported on
-// #341:
+//   require('uniwind/dist/metro/metro-transformer.cjs').transform(
+//     config, projectRoot, filePath, data, options,
+//   )
 //
-//   SyntaxError: ...uniwind.css: Missing closing }
-//   at &:not(:where(.light, .light *, .dark, ...))
+// — exactly what Metro itself calls after `withUniwindConfig` sets
+// `transformerPath` in `dist/metro/index.cjs`. We pass `filePath` ending
+// in `/components/web/metro-injected.js`, which is the canonical path
+// uniwind's transformer matches to write `node_modules/uniwind/uniwind.css`
+// via non-atomic `fs.writeFileSync` (the bug).
 //
-// Exits 0 (= "race observed") when the reader catches at least one torn
-// read. Exits 2 (= "no race observed") if the reader's full window
-// completes without any parse failure.
+// In parallel, a reader process repeatedly reads `uniwind.css` and parses
+// it with `lightningcss` (the same parser Tailwind/uniwind use). Any
+// failed parse is a torn read — the same root cause as the `Missing
+// closing }` bundle errors reported on #341.
+//
+// The transformer's final step (`worker.transform` on the injected JS)
+// may fail in a minimal harness without a fully wired Metro config; we
+// swallow that error since the buggy code path — `injectThemes` →
+// `buildCSS` → `fs.writeFileSync` — runs first and is what we're
+// exercising.
 
-import { existsSync, readFileSync, readdirSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join } from 'node:path';
 import { createRequire } from 'node:module';
 import { fork } from 'node:child_process';
@@ -31,27 +36,15 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const APP_DIR = join(__dirname, '..', 'apps', 'myapp');
-const CSS_ENTRY = join(APP_DIR, 'src', 'styles.css');
+const CSS_ENTRY_REL = './src/styles.css';
+const CSS_ENTRY_ABS = join(APP_DIR, 'src', 'styles.css');
+const DTS_FILE = join(APP_DIR, 'uniwind-types.d.ts');
+
 const UNIWIND_PKG_JSON = require.resolve('uniwind/package.json', { paths: [APP_DIR] });
 const UNIWIND_ROOT = dirname(UNIWIND_PKG_JSON);
 const UNIWIND_CSS = join(UNIWIND_ROOT, 'uniwind.css');
-
-// Bypass the `oldCSSFile === newCssFile` short-circuit so each writer
-// actually performs `writeFileSync`. We re-prime with a sentinel that's
-// guaranteed to differ from uniwind's generated output.
-const PRIMER = '/* race-test primer */\n';
-
-function loadUniwindBuildCSS() {
-  const sharedDir = join(UNIWIND_ROOT, 'dist', 'shared');
-  for (const f of readdirSync(sharedDir)) {
-    if (!f.endsWith('.cjs')) continue;
-    const src = readFileSync(join(sharedDir, f), 'utf-8');
-    if (src.includes('exports.buildCSS')) {
-      return require(join(sharedDir, f)).buildCSS;
-    }
-  }
-  throw new Error('Could not locate uniwind buildCSS in dist/shared/*.cjs');
-}
+const METRO_INJECTED = join(UNIWIND_ROOT, 'dist', 'module', 'components', 'web', 'metro-injected.js');
+const TRANSFORMER_PATH = join(UNIWIND_ROOT, 'dist', 'metro', 'metro-transformer.cjs');
 
 const THEMES = [
   'light', 'dark',
@@ -61,24 +54,40 @@ const THEMES = [
   'yellow-dark', 'yellow-light',
 ];
 
+// Bypass uniwind's `oldCSSFile === newCssFile` short-circuit so each
+// iteration actually performs a `writeFileSync`. Without this, only the
+// very first writer in the system writes; everyone else sees identical
+// content and skips.
+const PRIMER = '/* race-test primer */\n';
+
 const ROLE = process.argv[2];
 const ITERATIONS = Number(process.env.STRESS_ITERATIONS ?? 200);
 const WORKERS = Number(process.env.STRESS_WORKERS ?? 16);
-const DURATION_MS = Number(process.env.STRESS_DURATION_MS ?? 10000);
+const DURATION_MS = Number(process.env.STRESS_DURATION_MS ?? 15000);
 
 if (ROLE === 'writer') {
-  const buildCSS = loadUniwindBuildCSS();
+  // process.cwd() must contain the relative cssEntryFile path because
+  // uniwind's transformer joins them with process.cwd().
+  process.chdir(APP_DIR);
+  const { transform } = require(TRANSFORMER_PATH);
+  const config = {
+    uniwind: { themes: THEMES, cssEntryFile: CSS_ENTRY_REL, dtsFile: DTS_FILE },
+  };
+  const options = { type: 'module', platform: 'web', dev: false, minify: false };
   for (let i = 0; i < ITERATIONS; i++) {
     try {
       writeFileSync(UNIWIND_CSS, PRIMER);
-      await buildCSS(THEMES, CSS_ENTRY);
+    } catch {}
+    try {
+      await transform(config, APP_DIR, METRO_INJECTED, Buffer.from(''), options);
     } catch {
-      // best-effort: ignore transient errors so the race surface stays open
+      // worker.transform may fail in this harness — irrelevant, the
+      // buggy buildCSS call already ran before we got here.
     }
   }
   process.exit(0);
 } else if (ROLE === 'reader') {
-  const { transform } = require('lightningcss');
+  const { transform: lightningTransform } = require('lightningcss');
   let parseFailures = 0;
   let cleanReads = 0;
   let firstSample = null;
@@ -92,7 +101,7 @@ if (ROLE === 'writer') {
     }
     if (content.length === 0 || content === PRIMER) continue;
     try {
-      transform({ code: Buffer.from(content), filename: 'uniwind.css' });
+      lightningTransform({ code: Buffer.from(content), filename: 'uniwind.css' });
       cleanReads++;
     } catch (err) {
       parseFailures++;

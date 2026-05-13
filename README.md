@@ -15,17 +15,17 @@ pnpm install
 node scripts/stress-race.mjs
 ```
 
-The script forks N writer processes that each call uniwind's own `buildCSS` in a tight loop (the same code path Metro hits when transforming `metro-injected.js`), plus one reader process that re-reads `uniwind.css` and parses it with `lightningcss` (the same parser Tailwind/uniwind use). Any failed parse is a torn read.
+The script forks 16 writer processes that each call uniwind's **public Metro transformer entry point** — `require('uniwind/dist/metro/metro-transformer.cjs').transform(config, projectRoot, filePath, data, options)`, exactly what Metro itself invokes after `withUniwindConfig` sets `transformerPath`. The `filePath` is `node_modules/uniwind/dist/module/components/web/metro-injected.js`, the canonical path uniwind's transformer matches to write `uniwind.css`. In parallel, one reader process re-reads `uniwind.css` and parses it with `lightningcss` (the same parser Tailwind/uniwind use internally). Any failed parse is a torn read.
 
 Sample output without the fix:
 
 ```
 {
-  "parseFailures": 4,
-  "cleanReads": 567,
+  "parseFailures": 38,
+  "cleanReads": 11095,
   "firstSample": {
     "msg": "Unexpected token CloseParenthesis",
-    "length": 20047,
+    "length": 19938,
     "tail": "...\n    --space-7: unset;\n}"
   }
 }
@@ -33,7 +33,7 @@ writers: 16/16 clean exits
 reader: OBSERVED RACE
 ```
 
-After applying the fix (`node scripts/apply-fix.mjs` patches the installed bundle with the same atomic-write helper from PR #532), the reader runs through the same window with `parseFailures: 0`.
+After applying the fix (`node scripts/apply-fix.mjs` patches the installed bundle with the same atomic-write helper PR #532 adds to source), the reader runs through the same window with `parseFailures: 0` consistently.
 
 ## CI
 
@@ -45,7 +45,9 @@ After applying the fix (`node scripts/apply-fix.mjs` patches the installed bundl
 
 ## What didn't reproduce
 
-Before isolating the race to `buildCSS`, the same repro repo tried many full-Expo-build configurations (matrix below). None triggered the bug via normal Metro behavior, because Metro processes `metro-injected.js` and the CSS entry exactly once per build — only two concurrent `buildCSS` invocations, and the write window is microseconds. The direct stress test in `scripts/stress-race.mjs` is needed to expose the race reliably.
+Before isolating the race to `buildCSS`, this repo tried many full-Expo-build configurations matching the failing downstream wallet (large module graph, custom themes, tree shaking, multiple CSS layers, etc.). None reliably triggered the bug, because in a single Metro build `buildCSS` is only called twice per platform (once from `metro-injected.js`'s transform, once from the CSS entry's). Two callers + a microsecond write window = essentially impossible to catch via full Expo builds.
+
+`scripts/stress-race.mjs` exposes the race reliably by invoking the same `transform()` entry point Metro does, from 16 concurrent processes.
 
 | variant | result |
 | --- | --- |
@@ -62,7 +64,7 @@ Before isolating the race to `buildCSS`, the same repro repo tried many full-Exp
 | Expo Router entry with `src/app` root | pass |
 | Imported Uniwind CSS entry + generic package-exported CSS subpath | pass |
 | 1,400 screens importing `uniwind/components`, `withUniwind`, `useCSSVariable`, `useResolveClassNames` + extra CSS import | pass |
-| Direct stress against `buildCSS` (`scripts/stress-race.mjs`) | **fail (= race observed)** |
+| **`scripts/stress-race.mjs` — 16 concurrent `transform()` callers via uniwind's public Metro entry point** | **fail (= race observed)** |
 
 ## Versions
 
