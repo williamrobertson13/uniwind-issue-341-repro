@@ -5,43 +5,31 @@ on:
     branches: [main]
   workflow_dispatch:
 
-# Companion to .github/workflows/stress.yml. Where `stress.yml` exercises
-# uniwind's `transform()` from a controlled harness, this workflow runs
-# multiple *real* `expo export -p web` builds in parallel against the
-# same `node_modules/uniwind/uniwind.css` — purely through
-# `withUniwindConfig` and Metro, no extra scripts. Each build's natural
-# `injectThemes` → `buildCSS` → non-atomic `fs.writeFileSync` calls
-# contend for the same file, exposing the same race uniwind#341
-# downstream hits inside a single very-large bundle.
+# Companion to .github/workflows/stress.yml. Runs N real `expo export -p
+# web` builds in parallel against the same node_modules/uniwind install,
+# purely through `withUniwindConfig`. When the race triggers, the
+# failure is the literal Metro-output error from #341.
+#
+# N is intentionally low (4) — ubuntu-latest is 2 vCPU / 7 GB, and 8+
+# parallel expo exports OOM/SIGTERM the runner before completing.
 
 jobs:
   concurrent:
-    name: N=${{ matrix.n }} concurrent expo builds
+    name: ${{ matrix.n }}× expo export -p web (attempt ${{ matrix.attempt }})
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
-        attempt: [1, 2, 3]
-        n: [8]
+        attempt: [1, 2, 3, 4, 5]
+        n: [4]
     steps:
       - uses: actions/checkout@v4
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10.16.1
-          run_install: false
-
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 24
-          cache: pnpm
-
-      - name: Install
-        run: pnpm install --frozen-lockfile
-
+      - uses: pnpm/action-setup@v4
+        with: { version: 10.16.1, run_install: false }
+      - uses: actions/setup-node@v4
+        with: { node-version: 24, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
       - name: ${{ matrix.n }} concurrent expo exports
-        env:
-          N: ${{ matrix.n }}
+        env: { N: '${{ matrix.n }}', NODE_OPTIONS: '--max-old-space-size=2048' }
         run: bash scripts/concurrent-metro.sh
