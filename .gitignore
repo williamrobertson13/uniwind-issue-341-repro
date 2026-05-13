@@ -1,7 +1,9 @@
 node_modules/
 .expo/
 dist/
+dist-*/
 web-build/
 *.log
+build-*.log
 .DS_Store
 .env*.local
