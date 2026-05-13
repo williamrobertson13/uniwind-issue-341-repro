@@ -1,10 +1,51 @@
 # uniwind issue #341 repro
 
-Reproduction scaffold for [uni-stack/uniwind#341](https://github.com/uni-stack/uniwind/issues/341): `expo export -p web` fails on `ubuntu-latest` with a `SyntaxError` parsing `node_modules/uniwind/dist/{common,module}/components/web/metro-injected.js`.
+Reproduction for [uni-stack/uniwind#341](https://github.com/uni-stack/uniwind/issues/341): `expo export -p web` intermittently fails with a `SyntaxError` whose hint is the `:not(:where(.light, .light *, .dark, .dark *, ...))` selector that uniwind generates into `node_modules/uniwind/uniwind.css`.
 
-> **Status**: scaffold only — does not yet reproduce. The matrix below varies the parts of a real-world Expo SDK 54 setup that seemed most likely to trigger the race, while keeping this repository generic and free of downstream app code. Latest non-extension runtime/CSS stress run: https://github.com/williamrobertson13/uniwind-issue-341-repro/actions/runs/25521931695
+The fix is [uni-stack/uniwind#532](https://github.com/uni-stack/uniwind/pull/532): route `buildCSS` and `buildDtsFile` through an atomic `writeFile + renameSync` helper instead of the non-atomic `fs.writeFileSync`.
 
-## What's been tried (all green)
+## Root cause
+
+`uniwind`'s Metro transformer calls `buildCSS` from every transform of `components/web/metro-injected.js` and the user's CSS entry file. Each call does a non-atomic `fs.writeFileSync('node_modules/uniwind/uniwind.css', ...)` — truncate then write. While that's in flight, another Metro worker can read the same file (through Tailwind compiling `@import 'uniwind'` from `generateCSSForThemes`/`compileVirtual`). The reader observes a partial CSS file and produces the `Missing closing }` parse error. The race window is microseconds, which is why local macOS builds almost never hit it and Linux CI does.
+
+## Reproduction
+
+```
+pnpm install
+node scripts/stress-race.mjs
+```
+
+The script forks N writer processes that each call uniwind's own `buildCSS` in a tight loop (the same code path Metro hits when transforming `metro-injected.js`), plus one reader process that re-reads `uniwind.css` and parses it with `lightningcss` (the same parser Tailwind/uniwind use). Any failed parse is a torn read.
+
+Sample output without the fix:
+
+```
+{
+  "parseFailures": 4,
+  "cleanReads": 567,
+  "firstSample": {
+    "msg": "Unexpected token CloseParenthesis",
+    "length": 20047,
+    "tail": "...\n    --space-7: unset;\n}"
+  }
+}
+writers: 16/16 clean exits
+reader: OBSERVED RACE
+```
+
+After applying the fix (`node scripts/apply-fix.mjs` patches the installed bundle with the same atomic-write helper from PR #532), the reader runs through the same window with `parseFailures: 0`.
+
+## CI
+
+`.github/workflows/stress.yml` runs the stress test on `ubuntu-latest` with Node 24:
+
+1. Pristine `uniwind@1.6.4` — runs the stress up to 3 times, exits success as soon as the race is observed.
+2. Applies the PR #532 atomic-write patch to the installed bundle.
+3. Re-runs the stress 3 times — fails if the race is still observed.
+
+## What didn't reproduce
+
+Before isolating the race to `buildCSS`, the same repro repo tried many full-Expo-build configurations (matrix below). None triggered the bug via normal Metro behavior, because Metro processes `metro-injected.js` and the CSS entry exactly once per build — only two concurrent `buildCSS` invocations, and the write window is microseconds. The direct stress test in `scripts/stress-race.mjs` is needed to expose the race reliably.
 
 | variant | result |
 | --- | --- |
@@ -14,37 +55,14 @@ Reproduction scaffold for [uni-stack/uniwind#341](https://github.com/uni-stack/u
 | `container: node:22` + `npm ci` (matches original report) | pass |
 | pnpm workspace (deep `node_modules/.pnpm/` symlinked store) | pass |
 | `react-native-reanimated` + `gesture-handler` + `@shopify/react-native-skia` + `react-native-svg` | pass |
-| Sentry metro wrapper (`getSentryExpoConfig`), custom babel transformer wrapping default, `resolveRequest` passthrough | pass |
+| Sentry metro wrapper, custom babel transformer, `resolveRequest` passthrough | pass |
 | 1,400 generated screens + 4,200 generated helper/data modules | pass |
-| exact Expo/RN/Metro/Tailwind/Uniwind versions from a failing downstream stack | pass |
-| generic extension-like Metro resolver mode (`REPRO_EXTENSION_MODE=true`) | pass |
+| Exact Expo / RN / Metro / Tailwind / Uniwind versions from a failing downstream stack | pass |
+| Generic extension-like Metro resolver mode (`REPRO_EXTENSION_MODE=true`) | pass |
 | Expo Router entry with `src/app` root | pass |
-| imported Uniwind CSS entry + generic package-exported CSS subpath | pass |
+| Imported Uniwind CSS entry + generic package-exported CSS subpath | pass |
 | 1,400 screens importing `uniwind/components`, `withUniwind`, `useCSSVariable`, `useResolveClassNames` + extra CSS import | pass |
-
-## Failing log (from the original report and downstream observations)
-
-```
-Web Bundling failed XXXms index.web.tsx (XXXX modules)
-SyntaxError: node_modules/uniwind/dist/module/components/web/metro-injected.js:
-  Missing closing } at &:not(:where(.light, .light *, .dark, .dark *, ...))
-```
-
-## Theory
-
-`uniwind`'s Metro transformer writes `node_modules/uniwind/uniwind.css` non-atomically via `fs.writeFileSync` from multiple workers. On Linux CI runners with multiple Metro workers, one worker truncates+rewrites the file while another reads it through `@import 'uniwind'` during the Tailwind compile, producing a partial CSS file and the syntax error above. Local macOS rarely hits it because of filesystem timing.
-
-## How to repro
-
-GitHub Actions workflow (`.github/workflows/repro.yml`) runs `expo export -p web --dev` three ways on `ubuntu-latest` with Node 24:
-
-| scenario        | flags                                                              |
-| --------------- | ------------------------------------------------------------------ |
-| default         | (none)                                                             |
-| graph-optimize  | `EXPO_UNSTABLE_METRO_OPTIMIZE_GRAPH=1`                             |
-| tree-shaking    | both `EXPO_UNSTABLE_TREE_SHAKING=1` + `EXPO_UNSTABLE_METRO_OPTIMIZE_GRAPH=1` |
-
-Each scenario runs 5 iterations with full cache clear (`dist`, `.expo`, `node_modules/.cache`) between each. `metro.config.js` forces `maxWorkers=8`, disables package exports by default, and selectively re-enables them for generic Uniwind-related packages. The current workflow does not set `REPRO_EXTENSION_MODE`, so this pass does not exercise extension-specific resolution. The Expo Router root imports the app's Uniwind CSS entry (`src/styles.css`), a generic local package CSS export (`@repro/layered-css/layered-styles.css`), and an extra local CSS layer (`src/runtime-layer.css`), so CI exercises Metro's CSS transforms and CSS asset emission for app, package, and additional local CSS.
+| Direct stress against `buildCSS` (`scripts/stress-race.mjs`) | **fail (= race observed)** |
 
 ## Versions
 

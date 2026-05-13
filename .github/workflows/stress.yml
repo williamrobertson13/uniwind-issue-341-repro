@@ -1,0 +1,80 @@
+name: stress
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+jobs:
+  race:
+    name: writer/reader race
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.16.1
+          run_install: false
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Stress test (pristine uniwind — race expected)
+        id: pristine
+        continue-on-error: true
+        env:
+          STRESS_WORKERS: '16'
+          STRESS_ITERATIONS: '200'
+          STRESS_DURATION_MS: '15000'
+        run: |
+          # Run up to 3 times — race triggers most but not all runs on first try.
+          for i in 1 2 3; do
+            echo "::group::pristine run $i"
+            if node scripts/stress-race.mjs; then
+              echo "race=observed" >> $GITHUB_OUTPUT
+              echo "::endgroup::"
+              exit 0
+            fi
+            echo "::endgroup::"
+          done
+          echo "race=not-observed" >> $GITHUB_OUTPUT
+          exit 1
+
+      - name: Apply uniwind#532 atomic-write fix
+        if: steps.pristine.outcome == 'success'
+        run: node scripts/apply-fix.mjs
+
+      - name: Stress test (patched uniwind — no race expected)
+        if: steps.pristine.outcome == 'success'
+        env:
+          STRESS_WORKERS: '16'
+          STRESS_ITERATIONS: '200'
+          STRESS_DURATION_MS: '15000'
+        run: |
+          # Run 3 times; any race observed = fix incomplete.
+          for i in 1 2 3; do
+            echo "::group::patched run $i"
+            if node scripts/stress-race.mjs; then
+              echo "::error::Race still observed after applying uniwind#532 fix"
+              echo "::endgroup::"
+              exit 1
+            fi
+            echo "::endgroup::"
+          done
+          echo "Atomic-write fix closes the race."
+
+      - name: Surface result
+        if: always()
+        run: |
+          if [ "${{ steps.pristine.outcome }}" != "success" ]; then
+            echo "::error::Pristine stress test did not observe the race after 3 attempts."
+            exit 1
+          fi
